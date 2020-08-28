@@ -3,13 +3,12 @@
 #include <iostream>
 #include <fstream>
 
-using namespace std;
 
 int main(int argc, char** argv){
-	string baseLinkCalculated='laser_predict';
-	string worldCalculated='world';
-	string baseLinkActual='vehicle/085/lidar/front';
-	string worldActual='map';
+	std::string baseLinkCalculated="base_link";
+	std::string worldCalculated="camera_init";
+	std::string baseLinkActual="vehicle/085";
+	std::string worldActual="map";
 
 	ros::init(argc, argv, "error_calc");
 
@@ -18,7 +17,7 @@ int main(int argc, char** argv){
   	tf::TransformListener listener;
   	ros::Rate rate(10.0);
 
-  	ofstream DistanceFile("distance.txt");
+  	std::ofstream DistanceFile("distance_dump_carla.txt");
 
   	DistanceFile<<"X_diff\tY_diff\tZ_diff\tdistance\ttimestamp\n";
 
@@ -30,7 +29,7 @@ int main(int argc, char** argv){
 
   	while (node.ok()){
   
-  		timestamp_prev=transform1.stamp_;
+  		timestamp_prev=transformActual.stamp_;
 
 	    try{
 	    	listener.waitForTransform(baseLinkActual,worldActual,
@@ -61,7 +60,7 @@ int main(int argc, char** argv){
 			X_diff=translationActual.x()-translationCalculated.x();
 			Y_diff=translationActual.y()-translationCalculated.y();
 			Z_diff=translationActual.z()-translationCalculated.z();
-			distance=translation1.distance(translation2);
+			distance=translationActual.distance(translationCalculated);
 
 			DistanceFile<<X_diff<<"\t"<<Y_diff<<"\t"<<Z_diff<<"\t"<<distance<<"\t"<<timestamp_now<<"\n";
 
